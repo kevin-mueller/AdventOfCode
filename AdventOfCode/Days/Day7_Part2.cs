@@ -14,21 +14,39 @@ namespace AdventOfCode.Days
         private List<Task> steps = new List<Task>();
         private List<Task> finalOrder = new List<Task>();
 
-        private Day7 day7 = new Day7();
-        public void Solve(string inputPath)
-        {
-            string Q = day7.Part1(inputPath);
+        private Day7 day7;
 
+        public Day7_Part2(string inputPath)
+        {
+            day7 = new Day7(inputPath);
+        }
+
+        public void Solve()
+        {
+            List<Worker> workers = new List<Worker>
+            {
+                new Worker(),
+                new Worker(),
+            };
+            List<Task> allNextPossible = new List<Task>();
+
+            
+            allNextPossible = day7.GetAllNextPossible(day7.GetFirstStep());
+
+            foreach (var worker in workers)
+            {
+                day7.GetNextStepForWorker(worker, allNextPossible);
+            }
 
         }
 
 
-        class Worker
+        public class Worker
         {
-            public char CurrentTask { get; set; }
+            public Task CurrentTask { get; set; }
         }
 
-        class Task
+        public class Task
         {
             public Task(char c)
             {

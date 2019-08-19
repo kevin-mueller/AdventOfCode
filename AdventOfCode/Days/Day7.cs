@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static AdventOfCode.Days.Day7_Part2;
 
 namespace AdventOfCode.Days
 {
@@ -11,7 +12,7 @@ namespace AdventOfCode.Days
         private List<char> artifacts = new List<char>();
         private List<char> finalOrder = new List<char>();
 
-        public string Part1(string inputPath)
+        public Day7(string inputPath)
         {
             string raw = File.ReadAllText(inputPath);
 
@@ -22,7 +23,10 @@ namespace AdventOfCode.Days
 
                 steps.Add(new char[] { s1, s2 });
             }
+        }
 
+        public char GetFirstStep()
+        {
             //determine the first step:
             List<char> cStep = new List<char>();
             List<char> nStep = new List<char>();
@@ -32,23 +36,23 @@ namespace AdventOfCode.Days
                 nStep.Add(item[1]);
             }
             var x = cStep.Except(nStep).ToList();
-
             x.Sort();
-
             char firstStep = x.First();
             x.Remove(firstStep);
             foreach (var item in x)
             {
                 artifacts.Add(item);
             }
-
-
             finalOrder.Add(firstStep);
+            return firstStep;
+        }
 
+        public string Part1()
+        {
             foreach (var s in steps)
             {
                 if (!finalOrder.Contains(s[1]))
-                    finalOrder.Add(GetNextStep(finalOrder.Last()));
+                    finalOrder.Add(GetNextStepAlphabetical(finalOrder.Last()));
             }
 
             string res = "";
@@ -59,17 +63,14 @@ namespace AdventOfCode.Days
             return res;
         }
 
-
-        private char GetNextStep(char c)
+        public List<Task> GetAllNextPossible(char c)
         {
-            char nextStep = '_';
-            List<char> nextStepsPossible = new List<char>();
+            List<Task> nextStepsPossible = new List<Task>();
 
             foreach (var item in artifacts)
             {
-                nextStepsPossible.Add(item);
+                nextStepsPossible.Add(new Task(item));
             }
-
             artifacts.Clear();
 
             foreach (var item in steps)
@@ -94,28 +95,32 @@ namespace AdventOfCode.Days
 
                 if (allOfList1IsInList2)
                 {
-                    nextStepsPossible.Add(tmp);
+                    nextStepsPossible.Add(new Task(tmp));
                 }
-
-
             }
+            return nextStepsPossible.OrderBy(o => o.Label).ToList();
+        }
+
+        private char GetNextStepAlphabetical(char c)
+        {
+            char nextStep = '_';
+            List<Task> nextStepsPossible = GetAllNextPossible(c);
 
             if (nextStepsPossible.Count >= 2)
             {
-                //use alphabetical order
-                List<char> SortedList = nextStepsPossible.OrderBy(o => o).ToList();
-                nextStep = SortedList.First();
-                SortedList.Remove(nextStep);
-                foreach (var item in SortedList)
+                //list already sorted alphabetical
+                nextStep = nextStepsPossible.First().Label;
+                nextStepsPossible.Remove(nextStepsPossible.First());
+                foreach (var item in nextStepsPossible)
                 {
-                    artifacts.Add(item);
+                    artifacts.Add(item.Label);
                 }
             }
             else
             {
                 try
                 {
-                    nextStep = nextStepsPossible.First();
+                    nextStep = nextStepsPossible.First().Label;
                 }
                 catch
                 {
@@ -124,6 +129,30 @@ namespace AdventOfCode.Days
             }
 
             return nextStep;
+        }
+
+        public char GetNextStepForWorker(Worker worker, List<Task> allPossibleNext)
+        {
+
+            if (worker.CurrentTask == null)
+            {
+                //Worker wants work
+
+                //artifacts have priority 1
+                if (artifacts.Count > 0)
+                {
+                    artifacts.Sort();
+                    worker.CurrentTask = new Task(artifacts.First());
+                    artifacts.Remove(artifacts.First());
+                }
+                else
+                {
+                    worker.CurrentTask = allPossibleNext.First();
+                    allPossibleNext.Remove(worker.CurrentTask);
+                }
+            }
+
+            return default;
         }
     }
 
