@@ -11,7 +11,7 @@ namespace AdventOfCode.Days
         private List<char> artifacts = new List<char>();
         private List<char> finalOrder = new List<char>();
 
-        public void Part1(string inputPath)
+        public string Part1(string inputPath)
         {
             string raw = File.ReadAllText(inputPath);
 
@@ -35,7 +35,6 @@ namespace AdventOfCode.Days
 
             x.Sort();
 
-
             char firstStep = x.First();
             x.Remove(firstStep);
             foreach (var item in x)
@@ -52,11 +51,14 @@ namespace AdventOfCode.Days
                     finalOrder.Add(GetNextStep(finalOrder.Last()));
             }
 
+            string res = "";
             foreach (var item in finalOrder)
             {
-                Console.Write(item);
+                res += item;
             }
+            return res;
         }
+
 
         private char GetNextStep(char c)
         {

@@ -12,7 +12,8 @@ namespace AdventOfCode
         static void Main(string[] args)
         {
             //Day6.Solve(@"Input\day6.txt");
-            new Day7().Part1(@"Input\day7.txt");
+            //new Day7().Part1(@"Input\day7.txt");
+            new Day7_Part2().Solve(@"Input\day7_test.txt");
             Console.Read();
         }
     }
