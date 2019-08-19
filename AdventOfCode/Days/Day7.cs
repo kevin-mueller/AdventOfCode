@@ -9,6 +9,7 @@ namespace AdventOfCode.Days
     {
         private List<char[]> steps = new List<char[]>();
         private List<char> artifacts = new List<char>();
+        private List<char> finalOrder = new List<char>();
 
         public void Part1(string inputPath)
         {
@@ -30,14 +31,25 @@ namespace AdventOfCode.Days
                 cStep.Add(item[0]);
                 nStep.Add(item[1]);
             }
-            char firstStep = cStep.Except(nStep).ToList().First();
+            var x = cStep.Except(nStep).ToList();
 
-            List<char> finalOrder = new List<char>();
+            x.Sort();
+
+
+            char firstStep = x.First();
+            x.Remove(firstStep);
+            foreach (var item in x)
+            {
+                artifacts.Add(item);
+            }
+
+
             finalOrder.Add(firstStep);
 
             foreach (var s in steps)
             {
-                finalOrder.Add(GetNextStep(finalOrder.Last()));
+                if (!finalOrder.Contains(s[1]))
+                    finalOrder.Add(GetNextStep(finalOrder.Last()));
             }
 
             foreach (var item in finalOrder)
@@ -60,8 +72,30 @@ namespace AdventOfCode.Days
 
             foreach (var item in steps)
             {
+                List<char> hasToBeFinishedFirst = new List<char>();
+                char tmp = default;
                 if (item[0] == c)
-                    nextStepsPossible.Add(item[1]);
+                {
+                    tmp = item[1];
+                }
+                else continue;
+                foreach (var t in steps)
+                {
+                    if (t[1] == tmp)
+                    {
+                        hasToBeFinishedFirst.Add(t[0]);
+                    }
+                }
+
+                //final order needs to contain ALL items in hasToBeFinished
+                var allOfList1IsInList2 = !hasToBeFinishedFirst.Except(finalOrder).Any();
+
+                if (allOfList1IsInList2)
+                {
+                    nextStepsPossible.Add(tmp);
+                }
+
+
             }
 
             if (nextStepsPossible.Count >= 2)
