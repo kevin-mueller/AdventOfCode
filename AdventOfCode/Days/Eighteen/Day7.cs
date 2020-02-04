@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static AdventOfCode.Days.Day7_Part2;
+using static AdventOfCode.Days.Eighteen.Day7_Part2;
 
-namespace AdventOfCode.Days
+namespace AdventOfCode.Days.Eighteen
 {
     public class Day7
     {

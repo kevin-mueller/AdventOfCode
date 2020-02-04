@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace AdventOfCode.Days
+namespace AdventOfCode.Days.Eighteen
 {
     public static class Day6
     {

@@ -43,10 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Days\Day6.cs" />
-    <Compile Include="Days\Day7.cs" />
-    <Compile Include="Days\Day7_Part2.cs" />
-    <Compile Include="Days\Day8.cs" />
+    <Compile Include="Days\Eighteen\Day6.cs" />
+    <Compile Include="Days\Eighteen\Day7.cs" />
+    <Compile Include="Days\Eighteen\Day7_Part2.cs" />
+    <Compile Include="Days\Eighteen\Day8.cs" />
+    <Compile Include="Days\Nineteen\Day1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -54,24 +55,26 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Input\day6.txt">
+    <Content Include="Input\2018\day6.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Input\day6_test.txt">
+    <Content Include="Input\2018\day6_test.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Input\day7.txt">
+    <Content Include="Input\2018\day7.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Input\day7_test.txt">
+    <Content Include="Input\2018\day7_test.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Input\day8.txt">
+    <Content Include="Input\2018\day8.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Input\day8_test.txt">
+    <Content Include="Input\2018\day8_test.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Input\2019\day1.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

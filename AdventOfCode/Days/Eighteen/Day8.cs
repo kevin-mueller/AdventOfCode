@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace AdventOfCode.Days
+namespace AdventOfCode.Days.Eighteen
 {
     public class Day8
     {
@@ -14,6 +14,7 @@ namespace AdventOfCode.Days
         //Childnodes of childnodes metadata is not recognized correctly. Debug.
         public Day8(string inputPath)
         {
+            List<Node> res = new List<Node>();
             nodes = new List<Node>();
             string raw = File.ReadAllText(inputPath);
             rawNodes = Array.ConvertAll(raw.Split(' '), int.Parse);
@@ -23,12 +24,12 @@ namespace AdventOfCode.Days
                 Index = 0
             };
 
-            ProcessNode(n_start);
+            res.Add(ProcessNode(n_start));
 
             nodes = ListNodes(n_start);
             foreach (var node in nodes)
             {
-                ProcessNode(node);
+                res.Add(ProcessNode(node));
             }
         }
 

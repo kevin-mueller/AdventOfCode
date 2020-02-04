@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AdventOfCode.Days
+namespace AdventOfCode.Days.Eighteen
 {
     public class Day7_Part2
     {
