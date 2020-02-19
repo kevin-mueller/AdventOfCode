@@ -17,7 +17,7 @@ namespace AdventOfCode
             //Console.Write(new Day7(@"Input\day7.txt").Part1());
             //new Day7_Part2(@"Input\day7_test.txt").Solve();
             //Console.WriteLine(new Day8(@"Input\day8_test.txt").Part1());
-            Console.WriteLine(Day3.Solve(@"C:\Users\M0231780\source\repos\AdventOfCode\AdventOfCode\Input\2019\day3.txt"));
+            Console.WriteLine(Day3.Solve(@"C:\Users\kevin\Source\Repos\kevin-mueller\AdventOfCode\AdventOfCode\Input\2019\Day3.txt"));
             Console.Read();
         }
     }

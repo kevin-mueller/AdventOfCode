@@ -10,19 +10,21 @@ namespace AdventOfCode.Days.Nineteen
     {
         public static int Solve(string inputPath)
         {
-
             string[] wiresRaw = File.ReadAllLines(inputPath);
 
             List<Wire> wires = new List<Wire>();
+            var matrix = new Matrix();
             foreach (var item in wiresRaw)
             {
-                wires.Add(new Wire(item));
+                wires.Add(new Wire(item, matrix));
+                matrix.ResetCurrentPosition();
             }
 
             var allPointsVisited1 = wires[0]._allPointsVisited;
             var allPointsVisited2 = wires[1]._allPointsVisited;
 
-            var intersectingPoints = allPointsVisited1.Where(o => allPointsVisited2.Any(w => w.X == o.X && w.Y == o.Y));
+            //var intersectingPoints = allPointsVisited1.Where(o => allPointsVisited2.Any(w => w.X == o.X && w.Y == o.Y));
+            var intersectingPoints = allPointsVisited2.Where(o => o.Crossed);
             List<int> distances = new List<int>();
             foreach (var item in intersectingPoints)
             {
@@ -30,7 +32,7 @@ namespace AdventOfCode.Days.Nineteen
             }
             distances.Sort();
             //The first one is the central port
-            return distances[1];
+            return distances[0];
         }
     }
 
@@ -40,10 +42,10 @@ namespace AdventOfCode.Days.Nineteen
 
         public List<Point> _allPointsVisited { get; set; }
 
-        public Wire(string inputRaw)
+        public Wire(string inputRaw, Matrix matrix)
         {
             _instructions = BuildInstructionTable(inputRaw);
-            _allPointsVisited = ComputeAllPointsVisited(_instructions);
+            _allPointsVisited = ComputeAllPointsVisited(_instructions, matrix);
         }
 
         private List<string> BuildInstructionTable(string wireData)
@@ -55,11 +57,10 @@ namespace AdventOfCode.Days.Nineteen
             return _instructions;
         }
 
-        private List<Point> ComputeAllPointsVisited(List<string> instructionTable)
+        private List<Point> ComputeAllPointsVisited(List<string> instructionTable, Matrix matrix)
         {
             //TOOD Check for index out of bounds exception.
             //TODO Idealy, scan the input an calculate the size of the matrix.
-            var matrix = new Matrix();
 
             //TODO loop through the matrix and set the points visited to true.
             foreach (var item in instructionTable)
@@ -115,6 +116,7 @@ namespace AdventOfCode.Days.Nineteen
         public int Y { get; set; }
         public bool Visited { get; set; }
         public bool IsCentralPort { get; set; }
+        public bool Crossed { get; set; }
 
         public int CalculateDistanceToCentralPort()
         {
@@ -144,6 +146,12 @@ namespace AdventOfCode.Days.Nineteen
             });
         }
 
+        public void ResetCurrentPosition()
+        {
+            currentMatrixPosition.X = 0;
+            currentMatrixPosition.Y = 0;
+        }
+
         public List<Point> GetMatrix()
         {
             return matrix;
@@ -163,7 +171,7 @@ namespace AdventOfCode.Days.Nineteen
                 {
                     //Found
                     var element = matrix.First(z => z.X == currentMatrixPosition.X && z.Y == currentMatrixPosition.Y);
-                    element.Visited = true;
+                    element.Crossed = true;
                 }
                 catch
                 {
@@ -183,7 +191,7 @@ namespace AdventOfCode.Days.Nineteen
                 {
                     //Found
                     var element = matrix.First(z => z.X == currentMatrixPosition.X && z.Y == currentMatrixPosition.Y);
-                    element.Visited = true;
+                    element.Crossed = true;
                 }
                 catch
                 {
@@ -203,7 +211,7 @@ namespace AdventOfCode.Days.Nineteen
                 {
                     //Found
                     var element = matrix.First(z => z.X == currentMatrixPosition.X && z.Y == currentMatrixPosition.Y);
-                    element.Visited = true;
+                    element.Crossed = true;
                 }
                 catch
                 {
@@ -223,7 +231,7 @@ namespace AdventOfCode.Days.Nineteen
                 {
                     //Found
                     var element = matrix.First(z => z.X == currentMatrixPosition.X && z.Y == currentMatrixPosition.Y);
-                    element.Visited = true;
+                    element.Crossed = true;
                 }
                 catch
                 {
