@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AdventOfCode.Days.Nineteen
 {
@@ -13,61 +15,102 @@ namespace AdventOfCode.Days.Nineteen
             string[] wiresRaw = File.ReadAllLines(inputPath);
 
             List<Wire> wires = new List<Wire>();
-            var matrix = new Matrix();
+
             foreach (var item in wiresRaw)
             {
-                wires.Add(new Wire(item, matrix));
-                matrix.ResetCurrentPosition();
+                var wire = new Wire();
+                wire.BuildInstructionTable(item);
+                wires.Add(wire);
             }
 
-            var allPointsVisited1 = wires[0]._allPointsVisited;
-            var allPointsVisited2 = wires[1]._allPointsVisited;
+            List<Task> pendingTasks = new List<Task>();
+            foreach (var item in wires)
+            {
+                //Run parallell. (It takes long enough)
+                Task t = new Task(delegate
+                {
+                    item.ComputeAllPointsVisited(item.Instructions);
+                });
+                pendingTasks.Add(t);
+                t.Start();
+            }
 
-            //var intersectingPoints = allPointsVisited1.Where(o => allPointsVisited2.Any(w => w.X == o.X && w.Y == o.Y));
-            var intersectingPoints = allPointsVisited2.Where(o => o.Crossed);
-            List<int> distances = new List<int>();
+            Console.WriteLine($"Waiting for {pendingTasks.Count} tasks to complete.");
+            foreach (var task in pendingTasks)
+            {
+                task.Wait();
+            }
+
+            Console.WriteLine("All points computed");
+
+            //Since I've no idea what the heck is actually going on, here's a visual output:
+            new Visualizer(wires).ShowDialog();
+
+            //Calculate all intersecting points (should work for x wires)
+            List<Point> intersectingPoints = new List<Point>();
+            foreach (var baseList in wires)
+            {
+                foreach (var otherList in wires)
+                {
+                    if (baseList.Equals(otherList))
+                        continue;
+
+                    Console.WriteLine("Calculating intersecting points..");
+                    var tmp = baseList.AllPointsVisited.FindAll(o => otherList.AllPointsVisited.Any(w => w.X == o.X && w.Y == o.Y));
+                    intersectingPoints.AddRange(tmp);
+                    Console.WriteLine($"Found {intersectingPoints.Count} intersecting points.");
+                }
+                //Since there are only two wires for now, we can break here.
+                break;
+            }
+
+            var distances = new List<int>();
             foreach (var item in intersectingPoints)
             {
                 distances.Add(item.CalculateDistanceToCentralPort());
             }
             distances.Sort();
+            distances = distances.Distinct().ToList();
+
+            foreach (var item in distances)
+            {
+                Console.WriteLine(item);
+            }
+
             //The first one is the central port
-            return distances[0];
+            return distances[1];
         }
     }
 
     internal class Wire
     {
-        private readonly List<string> _instructions = new List<string>();
+        private readonly Matrix matrix;
 
-        public List<Point> _allPointsVisited { get; set; }
+        public List<Point> AllPointsVisited;
+        public List<string> Instructions = new List<string>();
 
-        public Wire(string inputRaw, Matrix matrix)
+        public Wire()
         {
-            _instructions = BuildInstructionTable(inputRaw);
-            _allPointsVisited = ComputeAllPointsVisited(_instructions, matrix);
+            matrix = new Matrix();
         }
 
-        private List<string> BuildInstructionTable(string wireData)
+        public List<string> BuildInstructionTable(string wireData)
         {
             foreach (var item in wireData.Split(','))
             {
-                _instructions.Add(item);
+                Instructions.Add(item);
             }
-            return _instructions;
+            return Instructions;
         }
 
-        private List<Point> ComputeAllPointsVisited(List<string> instructionTable, Matrix matrix)
+        public void ComputeAllPointsVisited(List<string> instructionTable)
         {
-            //TOOD Check for index out of bounds exception.
-            //TODO Idealy, scan the input an calculate the size of the matrix.
-
             //TODO loop through the matrix and set the points visited to true.
-            foreach (var item in instructionTable)
+            for (int i = 0; i < instructionTable.Count; i++)
             {
-                char direction = item[0];
-                int travelDistance = Convert.ToInt32(item.Remove(0, 1));
-                Console.WriteLine($"Traveling {direction} ({travelDistance})");
+                Console.WriteLine($"Calculating.. ({i + 1} / {instructionTable.Count})");
+                char direction = instructionTable[i][0];
+                int travelDistance = Convert.ToInt32(instructionTable[i].Remove(0, 1));
                 switch (direction)
                 {
                     case 'R':
@@ -87,19 +130,7 @@ namespace AdventOfCode.Days.Nineteen
                         break;
                 }
             }
-
-            //List<Point> pointsVisited = new List<Point>();
-            //for (int i = 0; i < matrix.SizeX; i++)
-            //{
-            //    for (int j = 0; j < matrix.SizeY; j++)
-            //    {
-            //        if (matrix.GetValueAt(i, j))
-            //        {
-            //            pointsVisited.Add(new Point(i, j));
-            //        }
-            //    }
-            //}
-            return matrix.GetMatrix();
+            AllPointsVisited = matrix.GetMatrix();
         }
     }
 
@@ -120,22 +151,18 @@ namespace AdventOfCode.Days.Nineteen
 
         public int CalculateDistanceToCentralPort()
         {
-            return X + Y;
+            var dist = X + Y;
+            if (dist < 0)
+                dist *= -1;
+            return dist;
         }
     }
 
     internal class Matrix
     {
-        private const int MatrixSize = 9999999;
-
-        //Bigger Matrix => throws out of memory exception..
-        //use jagged array
         private readonly List<Point> matrix = new List<Point>();
 
         private readonly Point currentMatrixPosition = new Point(0, 0);
-
-        public readonly int SizeX;
-        public readonly int SizeY;
 
         public Matrix()
         {
@@ -171,7 +198,7 @@ namespace AdventOfCode.Days.Nineteen
                 {
                     //Found
                     var element = matrix.First(z => z.X == currentMatrixPosition.X && z.Y == currentMatrixPosition.Y);
-                    element.Crossed = true;
+                    element.Visited = true;
                 }
                 catch
                 {
