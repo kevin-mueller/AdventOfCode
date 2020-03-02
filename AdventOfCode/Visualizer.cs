@@ -11,7 +11,7 @@ namespace AdventOfCode
         private Panel panel1;
         private List<Wire> wires;
         private TrackBar trackBar1;
-        private float scale = 0.025f;
+        private float scale = 1.5f;
 
         public Visualizer(List<Wire> wire)
         {
@@ -64,7 +64,7 @@ namespace AdventOfCode
             {
                 Pen pen = new Pen(Color.FromArgb(rand.Next(255), rand.Next(255), rand.Next(255)))
                 {
-                    Width = 20f * scale
+                    Width = 5f * scale
                 };
 
                 List<PointF> points = new List<PointF>();

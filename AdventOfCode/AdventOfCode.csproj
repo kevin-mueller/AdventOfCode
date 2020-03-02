@@ -87,7 +87,9 @@
     </Content>
     <Content Include="Input\2019\day1.txt" />
     <Content Include="Input\2019\day2.txt" />
-    <Content Include="Input\2019\Day3.txt" />
+    <Content Include="Input\2019\Day3.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Visualizer.resx">
