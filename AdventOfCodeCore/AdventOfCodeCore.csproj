@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Input\2018\day6.txt" />
+    <None Remove="Input\2018\day6_test.txt" />
+    <None Remove="Input\2018\day7.txt" />
+    <None Remove="Input\2018\day7_test.txt" />
+    <None Remove="Input\2018\day8.txt" />
+    <None Remove="Input\2018\day8_test.txt" />
+    <None Remove="Input\2019\day1.txt" />
+    <None Remove="Input\2019\day2.txt" />
+    <None Remove="Input\2019\Day3.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Input\2018\day6.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Input\2018\day6_test.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Input\2018\day7.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Input\2018\day7_test.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Input\2018\day8.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Input\2018\day8_test.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Input\2019\day1.txt" />
+    <Content Include="Input\2019\day2.txt" />
+    <Content Include="Input\2019\Day3.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

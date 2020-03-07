@@ -42,9 +42,6 @@ namespace AdventOfCode.Days.Nineteen
 
             Console.WriteLine("All points computed");
 
-            //Since I've no idea what the heck is actually going on, here's a visual output:
-            new Visualizer(wires).ShowDialog();
-
             //Calculate all intersecting points (should work for x wires)
             List<Point> intersectingPoints = new List<Point>();
             foreach (var baseList in wires)
