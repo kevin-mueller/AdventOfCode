@@ -7,7 +7,7 @@ namespace AdventOfCodeCore
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine(Day3.Solve(@"C:\Users\Kevin\source\repos\kevin-mueller\AdventOfCode\AdventOfCode\Input\2019\Day3.txt"));
+            Console.WriteLine(Day3.Solve(@"C:\Users\M0231780\source\repos\AdventOfCode\AdventOfCodeCore\Input\2019\Day3.txt"));
             Console.ReadLine();
         }
     }

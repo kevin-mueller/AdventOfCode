@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -42,6 +43,10 @@ namespace AdventOfCode.Days.Nineteen
 
             Console.WriteLine("All points computed");
 
+            //File.WriteAllText("wires.json", JsonConvert.SerializeObject(wires));
+            Console.WriteLine("Saved wires.json");
+
+
             //Calculate all intersecting points (should work for x wires)
             List<Point> intersectingPoints = new List<Point>();
             foreach (var baseList in wires)
@@ -60,13 +65,19 @@ namespace AdventOfCode.Days.Nineteen
                 break;
             }
 
+
             var distances = new List<int>();
             foreach (var item in intersectingPoints)
             {
-                distances.Add(item.CalculateDistanceToCentralPort());
+                //distances.Add(item.CalculateDistanceToCentralPort());
+                int stepsOfWire1 = item.TranceBackToRoot();
+                item.Wire = item.Wire.Equals(wires[0]) ? wires[1] : wires[0];
+                int stepsOfWires2 = item.TranceBackToRoot();
+                distances.Add(stepsOfWire1 + stepsOfWires2);
             }
             distances.Sort();
-            distances = distances.Distinct().ToList();
+
+            //distances = distances.Distinct().ToList();
 
             foreach (var item in distances)
             {
@@ -127,6 +138,10 @@ namespace AdventOfCode.Days.Nineteen
                 }
             }
             AllPointsVisited = matrix.GetMatrix();
+            foreach (var item in AllPointsVisited)
+            {
+                item.Wire = this;
+            }
         }
     }
 
@@ -139,6 +154,8 @@ namespace AdventOfCode.Days.Nineteen
             Visited = visited;
         }
 
+        public Wire Wire;
+
         public int X { get; set; }
         public int Y { get; set; }
         public bool Visited { get; set; }
@@ -147,6 +164,36 @@ namespace AdventOfCode.Days.Nineteen
         public int CalculateDistanceToCentralPort()
         {
             return Math.Abs(X) + Math.Abs(Y);
+        }
+
+        public int TranceBackToRoot()
+        {
+            int steps = 0;
+            var ancestor = GetAncestor(this);
+            while (ancestor != null)
+            {
+                steps++;
+                ancestor = GetAncestor(ancestor);
+            }
+            return steps;
+        }
+
+        private Point GetAncestor(Point p)
+        {
+            var ancestor = p.Wire.AllPointsVisited.Find(x => x.X - 1 == p.X && x.Y == p.Y && x.X < p.X - 1);
+            if (ancestor == null)
+            {
+                ancestor = p.Wire.AllPointsVisited.Find(x => x.X + 1 == p.X && x.Y == p.Y && x.X < p.X + 1);
+                if (ancestor == null)
+                {
+                    ancestor = p.Wire.AllPointsVisited.Find(x => x.Y + 1 == p.Y && x.X == p.X && x.Y < p.Y + 1);
+                    if (ancestor == null)
+                    {
+                        ancestor = p.Wire.AllPointsVisited.Find(x => x.Y - 1 == p.Y && x.X == p.X && x.Y < p.Y - 1);
+                    }
+                }
+            }
+            return ancestor;
         }
     }
 
