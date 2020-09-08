@@ -1,6 +1,7 @@
 using AdventOfCode.Helpers;
 using Newtonsoft.Json;
 using NGenerics.DataStructures.Trees;
+using NGenerics.Patterns.Visitor;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,31 +21,73 @@ namespace AdventOfCode.Days.Nineteen
         }
         public int PartOne()
         {
-            //use tree implementation?
-            var com = new BinaryTree<Planet>(new Planet("COM"));
-
-            foreach (var item in orbitsRaw)
+            List<SimplePlanet> parsed = new List<SimplePlanet>();
+            foreach (var p in orbitsRaw)
             {
-                var planet = item.Split(")", StringSplitOptions.RemoveEmptyEntries)[0];
-                var planetChild = item.Split(")", StringSplitOptions.RemoveEmptyEntries)[1];
-
-                if (planet.Equals("COM"))
-                {
-                    com.Add(new Planet(planetChild));
-                }
-                else
-                {
-                    var planetNode = com.FindNode(x => x.Name.Equals(planet));
-                    planetNode.Add(new Planet(planetChild));
-                }
+                parsed.Add(new SimplePlanet(p.Split(")", StringSplitOptions.RemoveEmptyEntries)[0], p.Split(")", StringSplitOptions.RemoveEmptyEntries)[1]));
             }
 
-            foreach (var item in com)
+            var com = new GeneralTree<Planet>(new Planet("COM"));
+
+            string next = "COM";
+
+            com = Do(parsed, com, next);
+
+            int counter = 0;
+            com.BreadthFirstTraversal(new ActionVisitor<Planet>(delegate (Planet p)
             {
-                Console.WriteLine(item.Name);
+                var node = com.FindNode(x => x.Name.Equals(p.Name));
+                counter += node.Ancestors.Count;
+            }));
+
+            return counter;
+        }
+
+        public int PartTwo()
+        {
+            List<SimplePlanet> parsed = new List<SimplePlanet>();
+            foreach (var p in orbitsRaw)
+            {
+                parsed.Add(new SimplePlanet(p.Split(")", StringSplitOptions.RemoveEmptyEntries)[0], p.Split(")", StringSplitOptions.RemoveEmptyEntries)[1]));
             }
 
-            return 0;
+            var com = new GeneralTree<Planet>(new Planet("COM"));
+
+            string next = "COM";
+
+            com = Do(parsed, com, next);
+
+            int counter = 0;
+            List<Planet> mst = new List<Planet>();
+            
+            var x = com.FindNode(x => x.Name.Equals("YOU"));
+            var y = x.GetPath().ToList();
+
+            com.BreadthFirstTraversal(new ActionVisitor<Planet>(delegate (Planet p)
+            {
+                
+
+                var node = com.FindNode(x => x.Name.Equals(p.Name));
+                counter += node.Ancestors.Count;
+            }));
+
+            return counter;
+        }
+
+        private GeneralTree<Planet> Do(List<SimplePlanet> parsed, GeneralTree<Planet> com, string next)
+        {
+            var lefts = parsed.Where(x => x.Left.Equals(next));
+
+            var node = com.FindNode(x => x.Name.Equals(next));
+            if (node == null)
+                return com;
+
+            foreach (var left in lefts)
+            {
+                node.Add(new Planet(left.Right));
+                com = Do(parsed, com, left.Right);
+            }
+            return com;
         }
 
     }
@@ -52,9 +95,22 @@ namespace AdventOfCode.Days.Nineteen
     public class Planet
     {
         public string Name { get; set; }
+        public int Key { get; set; }
         public Planet(string name)
         {
             Name = name;
+            Key = int.MaxValue;
+        }
+    }
+
+    public class SimplePlanet
+    {
+        public string Left { get; set; }
+        public string Right { get; set; }
+        public SimplePlanet(string left, string right)
+        {
+            Left = left;
+            Right = right;
         }
     }
 }
