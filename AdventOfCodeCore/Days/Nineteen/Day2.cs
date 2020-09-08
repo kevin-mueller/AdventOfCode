@@ -47,7 +47,7 @@ namespace AdventOfCode.Days.Nineteen
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return sourceCode[0];
             }
