@@ -57,21 +57,29 @@ namespace AdventOfCode.Days.Nineteen
 
             com = Do(parsed, com, next);
 
-            int counter = 0;
-            List<Planet> mst = new List<Planet>();
             
-            var x = com.FindNode(x => x.Name.Equals("YOU"));
-            var y = x.GetPath().ToList();
+            var node1 = com.FindNode(x => x.Name.Equals("YOU"));
+            var node1Path = node1.GetPath().ToList();
 
-            com.BreadthFirstTraversal(new ActionVisitor<Planet>(delegate (Planet p)
+            var node2 = com.FindNode(x => x.Name.Equals("SAN"));
+            var node2Path = node2.GetPath().ToList();
+
+            var intersection = node1Path.Intersect(node2Path).ToList();
+            intersection.RemoveAt(intersection.Count -1);
+
+            foreach (var item in intersection)
             {
-                
+                node1Path.Remove(item);
+                node2Path.Remove(item);
+            }
 
-                var node = com.FindNode(x => x.Name.Equals(p.Name));
-                counter += node.Ancestors.Count;
-            }));
+            var path = new List<GeneralTree<Planet>>();
+            path.AddRange(node1Path);
+            path.AddRange(node2Path);
 
-            return counter;
+            var finalPath = path.DistinctBy(x => x.Data.Name);
+
+            return finalPath.Count() - 1;
         }
 
         private GeneralTree<Planet> Do(List<SimplePlanet> parsed, GeneralTree<Planet> com, string next)
