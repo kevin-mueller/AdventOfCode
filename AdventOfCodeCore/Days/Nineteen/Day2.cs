@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using AdventOfCode.Helpers;
 
 namespace AdventOfCode.Days.Nineteen
 {
@@ -14,7 +15,7 @@ namespace AdventOfCode.Days.Nineteen
                 Console.WriteLine($"Noun: {i}");
                 for (int j = 0; j < 100; j++)
                 {
-                    var res = Run(i, j, sourceCode);
+                    var res = IntComputer.Run(i, j, sourceCode);
                     if (res == 19690720)
                         return ((i * 100) + j).ToString();
                     sourceCode = Array.ConvertAll(stringArray, s => int.Parse(s));
@@ -24,34 +25,6 @@ namespace AdventOfCode.Days.Nineteen
             return "Error";
         }
 
-        private static int Run(int noun, int verb, int[] sourceCode)
-        {
-            sourceCode[1] = noun;
-            sourceCode[2] = verb;
-            try
-            {
-                for (int i = 0; i < sourceCode.Length; i += 4)
-                {
-                    switch (sourceCode[i])
-                    {
-                        case 1:
-                            sourceCode[sourceCode[i + 3]] = sourceCode[sourceCode[i + 1]] + sourceCode[sourceCode[i + 2]];
-                            break;
-
-                        case 2:
-                            sourceCode[sourceCode[i + 3]] = sourceCode[sourceCode[i + 1]] * sourceCode[sourceCode[i + 2]];
-                            break;
-
-                        case 99:
-                            throw new Exception();
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return sourceCode[0];
-            }
-            return -1;
-        }
+        
     }
 }
