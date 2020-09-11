@@ -24,5 +24,15 @@ namespace AdventOfCode.Helpers
                 }
             }
         }
+
+        public static ParameterMode ToParameterMode(this int parameterMode)
+        {
+            return parameterMode switch
+            {
+                0 => ParameterMode.Position,
+                1 => ParameterMode.Immediate,
+                _ => throw new Exception("Failed to convert int to ParameterMode"),
+            };
+        }
     }
 }

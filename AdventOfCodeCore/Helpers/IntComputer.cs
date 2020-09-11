@@ -91,7 +91,9 @@ namespace AdventOfCode.Helpers
 
             if (OpCode == 02 || OpCode == 01)
             {
-                
+                //three parameters
+                var paramValue = Convert.ToInt32(instruction.ToString().Tail(3)[0].ToString());
+                Parameters.Add(new Parameter(sourceCode, 0, paramValue.ToParameterMode()))
             }
         }
     }
@@ -115,11 +117,11 @@ namespace AdventOfCode.Helpers
 
         private readonly int _value;
         private readonly int[] sourceCode;
-        public Parameter(int[] sourceCode, int value)
+        public Parameter(int[] sourceCode, int value, ParameterMode mode)
         {
             this.sourceCode = sourceCode;
             _value = value;
-
+            Mode = mode;
         }
     }
 
