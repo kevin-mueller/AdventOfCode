@@ -14,7 +14,7 @@ namespace AdventOfCode.Days.Nineteen
     //https://adventofcode.com/2019/day/6
     public class Day6
     {
-        private string[] orbitsRaw;
+        private readonly string[] orbitsRaw;
         public Day6(string path)
         {
             orbitsRaw = File.ReadAllLines(path);

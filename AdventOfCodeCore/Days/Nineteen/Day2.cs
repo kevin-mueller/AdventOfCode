@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using AdventOfCode.Helpers;
 
 namespace AdventOfCode.Days.Nineteen
@@ -15,8 +17,8 @@ namespace AdventOfCode.Days.Nineteen
                 Console.WriteLine($"Noun: {i}");
                 for (int j = 0; j < 100; j++)
                 {
-                    var res = IntComputer.Run(i, j, sourceCode);
-                    if (res == 19690720)
+                    List<int> res = IntComputer.Run(i, j, sourceCode);
+                    if (res.Last() == 19690720)
                         return ((i * 100) + j).ToString();
                     sourceCode = Array.ConvertAll(stringArray, s => int.Parse(s));
                 }

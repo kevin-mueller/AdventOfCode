@@ -5,96 +5,96 @@ namespace AdventOfCode.Helpers
 {
     public static class IntComputer
     {
-        public static int Run(int? noun, int? verb, int[] sourceCode, params int[] parameters)
+        public static List<int> Run(int? noun, int? verb, int[] sourceCode, params int[] parameters)
         {
             if (noun != null)
                 sourceCode[1] = noun.Value;
             if (verb != null)
                 sourceCode[2] = verb.Value;
+
+            List<int> returnValues = new List<int>();
             try
             {
-                for (int i = 0; i < sourceCode.Length; i += 4)
+                int numberOfParameters = 3; //default
+                for (int i = 0; i < sourceCode.Length; i += numberOfParameters + 1)
                 {
-                    if (sourceCode[i].ToString().Length > 1)
+
+                    var opCode = Convert.ToInt32(sourceCode[i].ToString().Tail(2));
+                    List<Parameter> p = new List<Parameter>();
+                    string instructionString = sourceCode[i].ToString();
+
+                    switch (opCode)
                     {
-                        int opCode = Convert.ToInt32(sourceCode[i].ToString().Tail(2));
-                        int numberOfParams;
-                        if (opCode == 01 || opCode == 02)
-                            numberOfParams = 3;
-                        else if (opCode == 3 || opCode == 4)
-                            numberOfParams = 1;
+                        case 01:
+                        case 02:
+                            {
+                                numberOfParameters = 3;
+                                int expectedLength = 4;
+                                while (instructionString.Length < expectedLength)
+                                    instructionString = "0" + instructionString;
 
-
-
-                        switch (opCode)
-                        {
-                            case 1:
-                                sourceCode[sourceCode[i + 3]] = sourceCode[sourceCode[i + 1]] + sourceCode[sourceCode[i + 2]];
+                                //three parameters
+                                p.Add(new Parameter(sourceCode, sourceCode[i + 1], Convert.ToInt32(instructionString.ToString().Tail(3)[0].ToString()).ToParameterMode()));
+                                p.Add(new Parameter(sourceCode, sourceCode[i + 2], Convert.ToInt32(instructionString.ToString().Tail(4)[0].ToString()).ToParameterMode()));
+                                p.Add(new Parameter(sourceCode, sourceCode[i + 3], Convert.ToInt32(instructionString.ToString().Tail(5)[0].ToString()).ToParameterMode()));
                                 break;
+                            }
 
-                            case 2:
-                                sourceCode[sourceCode[i + 3]] = sourceCode[sourceCode[i + 1]] * sourceCode[sourceCode[i + 2]];
+                        case 03:
+                        case 04:
+                            {
+                                numberOfParameters = 1;
+                                int expectedLength = 2;
+                                while (instructionString.Length < expectedLength)
+                                    instructionString = "0" + instructionString;
+
+                                //one parameter
+                                p.Add(new Parameter(sourceCode, sourceCode[i + 1], Convert.ToInt32(instructionString.Tail(3)[0].ToString()).ToParameterMode()));
                                 break;
+                            }
 
-                            case 3:
-                                sourceCode[i + 1] = parameters[0];
-                                break;
-
-                            case 4:
-                                return sourceCode[sourceCode[i + 1]];
-
-                            case 99:
-                                throw new Exception();
-                        }
+                        case 99:
+                            throw new Exception("Program halt.");
+                        default:
+                            throw new Exception("Invalid OpCode!");
                     }
-                    else
+
+                    switch (opCode)
                     {
-                        //old instrucitons
-                        switch (sourceCode[i])
-                        {
-                            case 1:
-                                sourceCode[sourceCode[i + 3]] = sourceCode[sourceCode[i + 1]] + sourceCode[sourceCode[i + 2]];
+                        case 01:
+                            {
+                                
                                 break;
-
-                            case 2:
-                                sourceCode[sourceCode[i + 3]] = sourceCode[sourceCode[i + 1]] * sourceCode[sourceCode[i + 2]];
+                            }
+                        case 02:
+                            {
+                                sourceCode[p[2].ImmediateValue] = p[0].Value * p[1].Value;
                                 break;
-
-                            case 3:
-                                sourceCode[i + 1] = parameters[0];
+                            }
+                        case 03:
+                            {
+                                sourceCode[p[0].ImmediateValue] = parameters[0];
                                 break;
-
-                            case 4:
-                                return sourceCode[sourceCode[i + 1]];
-
-                            case 99:
-                                throw new Exception();
-                        }
+                            }
+                        case 04:
+                            {
+                                returnValues.Add(p[0].Value);
+                                break;
+                            }
+                        case 99:
+                            {
+                                throw new Exception("Program halt.");
+                            }
+                        default:
+                            throw new Exception("Unexpected OpCode");
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return sourceCode[0];
+                return returnValues;
             }
-            return -1;
-        }
-    }
-
-    public class Instruction
-    {
-        public int OpCode { get; set; }
-        public List<Parameter> Parameters = new List<Parameter>();
-        public Instruction(int instruction, int[] sourceCode)
-        {
-            OpCode = Convert.ToInt16(instruction.ToString().Tail(2));
-
-            if (OpCode == 02 || OpCode == 01)
-            {
-                //three parameters
-                var paramValue = Convert.ToInt32(instruction.ToString().Tail(3)[0].ToString());
-                Parameters.Add(new Parameter(sourceCode, 0, paramValue.ToParameterMode()))
-            }
+            return null;
         }
     }
 
@@ -114,6 +114,8 @@ namespace AdventOfCode.Helpers
                 return -1;
             }
         }
+
+        public int ImmediateValue { get => _value; }
 
         private readonly int _value;
         private readonly int[] sourceCode;

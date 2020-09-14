@@ -1,4 +1,5 @@
-﻿using AdventOfCode.Days.Nineteen;
+﻿using AdventOfCode.Days;
+using AdventOfCode.Days.Nineteen;
 using System;
 
 namespace AdventOfCodeCore
@@ -7,7 +8,7 @@ namespace AdventOfCodeCore
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine(new Day6(@"C:\Users\M0231780\source\repos\AdventOfCode\AdventOfCodeCore\Input\2019\day6.txt").PartTwo());
+            Console.WriteLine(new Day5(@"C:\Users\M0231780\source\repos\AdventOfCode\AdventOfCodeCore\Input\2019\day5.txt").PartOne());
         }
     }
 }
