@@ -21,63 +21,38 @@ namespace AdventOfCode.Helpers
 
                     var opCode = Convert.ToInt32(sourceCode[i].ToString().Tail(2));
                     List<Parameter> p = new List<Parameter>();
-                    string instructionString = sourceCode[i].ToString();
 
                     switch (opCode)
                     {
                         case 01:
+                            {
+                                numberOfParameters = 3;
+                                p = GetParameters(sourceCode, i, numberOfParameters);
+                                
+                                sourceCode[p[2].ImmediateValue] = p[0].Value + p[1].Value;
+                                break;
+                            }
                         case 02:
                             {
                                 numberOfParameters = 3;
-                                int expectedLength = 4;
-                                while (instructionString.Length < expectedLength)
-                                    instructionString = "0" + instructionString;
+                                p = GetParameters(sourceCode, i, numberOfParameters);
 
-                                //three parameters
-                                p.Add(new Parameter(sourceCode, sourceCode[i + 1], Convert.ToInt32(instructionString.ToString().Tail(3)[0].ToString()).ToParameterMode()));
-                                p.Add(new Parameter(sourceCode, sourceCode[i + 2], Convert.ToInt32(instructionString.ToString().Tail(4)[0].ToString()).ToParameterMode()));
-                                p.Add(new Parameter(sourceCode, sourceCode[i + 3], Convert.ToInt32(instructionString.ToString().Tail(5)[0].ToString()).ToParameterMode()));
-                                break;
-                            }
-
-                        case 03:
-                        case 04:
-                            {
-                                numberOfParameters = 1;
-                                int expectedLength = 2;
-                                while (instructionString.Length < expectedLength)
-                                    instructionString = "0" + instructionString;
-
-                                //one parameter
-                                p.Add(new Parameter(sourceCode, sourceCode[i + 1], Convert.ToInt32(instructionString.Tail(3)[0].ToString()).ToParameterMode()));
-                                break;
-                            }
-
-                        case 99:
-                            throw new Exception("Program halt.");
-                        default:
-                            throw new Exception("Invalid OpCode!");
-                    }
-
-                    switch (opCode)
-                    {
-                        case 01:
-                            {
-                                
-                                break;
-                            }
-                        case 02:
-                            {
                                 sourceCode[p[2].ImmediateValue] = p[0].Value * p[1].Value;
                                 break;
                             }
                         case 03:
                             {
+                                numberOfParameters = 1;
+                                p = GetParameters(sourceCode, i, numberOfParameters);
+
                                 sourceCode[p[0].ImmediateValue] = parameters[0];
                                 break;
                             }
                         case 04:
                             {
+                                numberOfParameters = 1;
+                                p = GetParameters(sourceCode, i, numberOfParameters);
+
                                 returnValues.Add(p[0].Value);
                                 break;
                             }
@@ -92,11 +67,32 @@ namespace AdventOfCode.Helpers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.StackTrace);
                 return returnValues;
             }
             return null;
         }
+
+        private static List<Parameter> GetParameters(int[] sourceCode, int pointer, int numberOfParameters)
+        {
+            List<Parameter> res = new List<Parameter>();
+            string instructionString = sourceCode[pointer].ToString();
+
+            int expectedLength = numberOfParameters + 2;
+            while (instructionString.Length < expectedLength)
+                instructionString = "0" + instructionString;
+
+            
+            for (int i = 1; i <= numberOfParameters; i++)
+            {
+                res.Add(new Parameter(sourceCode, sourceCode[pointer + i], Convert.ToInt32(instructionString.ToString().Tail(2 + i)[0].ToString()).ToParameterMode()));
+            }
+
+            return res;
+        }
     }
+
+
 
     public class Parameter
     {
