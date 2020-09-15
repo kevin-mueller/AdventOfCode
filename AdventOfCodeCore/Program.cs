@@ -8,7 +8,7 @@ namespace AdventOfCodeCore
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine(new Day5(@"C:\Users\M0231780\source\repos\AdventOfCode\AdventOfCodeCore\Input\2019\day5.txt").PartTwo());
+            Console.WriteLine(new Day7(@"C:\Users\M0231780\source\repos\AdventOfCode\AdventOfCodeCore\Input\2019\day7.txt").PartOne());
         }
     }
 }

@@ -34,5 +34,18 @@ namespace AdventOfCode.Helpers
                 _ => throw new Exception("Failed to convert int to ParameterMode"),
             };
         }
+
+        public static bool HasDuplicate<T>(this IEnumerable<T> source, IEqualityComparer<T> comparer)
+        {
+            if (source == null)
+                throw new ArgumentException(nameof(source));
+
+            HashSet<T> set = new HashSet<T>(comparer);
+            foreach (var item in source)
+                if (!set.Add(item))
+                    return true;
+
+            return false;
+        }
     }
 }

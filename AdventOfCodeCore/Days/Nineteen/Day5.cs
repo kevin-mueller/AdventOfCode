@@ -16,13 +16,13 @@ namespace AdventOfCode.Days.Nineteen
 
         public int PartOne()
         {
-            List<int> res = IntComputer.Run(null, null, sourceCode, new int[] { 1 });
+            List<int> res = new IntComputer(sourceCode).Run(null, null, new int[] { 1 });
             return res.Last();
         }
 
         public int PartTwo()
         {
-            List<int> res = IntComputer.Run(null, null, sourceCode, new int[] { 5 });
+            List<int> res = new IntComputer(sourceCode).Run(null, null, new int[] { 5 });
             return res.Last();
         }
     }

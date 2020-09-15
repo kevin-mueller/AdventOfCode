@@ -3,9 +3,20 @@ using System.Collections.Generic;
 
 namespace AdventOfCode.Helpers
 {
-    public static class IntComputer
+    public class IntComputer
     {
-        public static List<int> Run(int? noun, int? verb, int[] sourceCode, params int[] parameters)
+        private readonly int[] initialSourceCode;
+        private int numberOfInputInstructions;
+        private int[] sourceCode;
+        public IntComputer(int[] sourceCode)
+        {
+            this.sourceCode = sourceCode;
+            initialSourceCode = sourceCode;
+
+            numberOfInputInstructions = -1;
+        }
+
+        public List<int> Run(int? noun = null, int? verb = null, params int[] parameters)
         {
             if (noun != null)
                 sourceCode[1] = noun.Value;
@@ -26,40 +37,44 @@ namespace AdventOfCode.Helpers
                     {
                         case 01:
                             {
-                                p = GetParameters(sourceCode, i, 3);
+                                p = GetParameters(i, 3);
 
                                 sourceCode[p[2].ImmediateValue] = p[0].Value + p[1].Value;
                                 break;
                             }
                         case 02:
                             {
-                                p = GetParameters(sourceCode, i, 3);
+                                p = GetParameters(i, 3);
 
                                 sourceCode[p[2].ImmediateValue] = p[0].Value * p[1].Value;
                                 break;
                             }
                         case 03:
                             {
-                                p = GetParameters(sourceCode, i, 1);
+                                numberOfInputInstructions++;
+                                //if (numberOfInputInstructions > parameters.Length -1)
+                                //    numberOfInputInstructions = 0;
 
-                                sourceCode[p[0].ImmediateValue] = parameters[0];
+                                p = GetParameters(i, 1);
+
+                                sourceCode[p[0].ImmediateValue] = parameters[numberOfInputInstructions];
                                 break;
                             }
                         case 04:
                             {
-                                p = GetParameters(sourceCode, i, 1);
+                                p = GetParameters(i, 1);
 
                                 returnValues.Add(p[0].Value);
                                 break;
                             }
                         case 05:
                             {
-                                p = GetParameters(sourceCode, i, 2);
+                                p = GetParameters(i, 2);
                                 if (p[0].Value != 0)
                                 {
                                     i = p[1].Value;
 
-                                    //set increment to -1 so the for loop does not increment on its own. A bit ugly, i know...
+                                    //set increment to -1 so the for loop does not increment on its own. A bit ugly, I know...
                                     increment = -1;
                                     continue;
                                 }
@@ -67,12 +82,12 @@ namespace AdventOfCode.Helpers
                             }
                         case 06:
                             {
-                                p = GetParameters(sourceCode, i, 2);
+                                p = GetParameters(i, 2);
                                 if (p[0].Value == 0)
                                 {
                                     i = p[1].Value;
 
-                                    //set increment to -1 so the for loop does not increment on its own. A bit ugly, i know...
+                                    //set increment to -1 so the for loop does not increment on its own. A bit ugly, I know...
                                     increment = -1;
                                     continue;
                                 }
@@ -80,7 +95,7 @@ namespace AdventOfCode.Helpers
                             }
                         case 07:
                             {
-                                p = GetParameters(sourceCode, i, 3);
+                                p = GetParameters(i, 3);
                                 if (p[0].Value < p[1].Value)
                                 {
                                     sourceCode[p[2].ImmediateValue] = 1;
@@ -93,7 +108,7 @@ namespace AdventOfCode.Helpers
                             }
                         case 08:
                             {
-                                p = GetParameters(sourceCode, i, 3);
+                                p = GetParameters(i, 3);
                                 if (p[0].Value == p[1].Value)
                                 {
                                     sourceCode[p[2].ImmediateValue] = 1;
@@ -123,7 +138,13 @@ namespace AdventOfCode.Helpers
             return null;
         }
 
-        private static List<Parameter> GetParameters(int[] sourceCode, int pointer, int numberOfParameters)
+        public void Reset()
+        {
+            sourceCode = initialSourceCode;
+            numberOfInputInstructions = -1;
+        }
+
+        private List<Parameter> GetParameters(int pointer, int numberOfParameters)
         {
             List<Parameter> res = new List<Parameter>();
             string instructionString = sourceCode[pointer].ToString();

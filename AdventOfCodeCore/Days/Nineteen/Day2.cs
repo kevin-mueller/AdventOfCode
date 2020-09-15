@@ -17,7 +17,7 @@ namespace AdventOfCode.Days.Nineteen
                 Console.WriteLine($"Noun: {i}");
                 for (int j = 0; j < 100; j++)
                 {
-                    List<int> res = IntComputer.Run(i, j, sourceCode);
+                    List<int> res = new IntComputer(sourceCode).Run(i, j);
                     if (res.Last() == 19690720)
                         return ((i * 100) + j).ToString();
                     sourceCode = Array.ConvertAll(stringArray, s => int.Parse(s));
