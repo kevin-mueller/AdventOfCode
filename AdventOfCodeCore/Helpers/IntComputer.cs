@@ -15,8 +15,8 @@ namespace AdventOfCode.Helpers
             List<int> returnValues = new List<int>();
             try
             {
-                int numberOfParameters = 3; //default
-                for (int i = 0; i < sourceCode.Length; i += numberOfParameters + 1)
+                int increment = 3; //default
+                for (int i = 0; i < sourceCode.Length; i += increment + 1)
                 {
 
                     var opCode = Convert.ToInt32(sourceCode[i].ToString().Tail(2));
@@ -26,34 +26,82 @@ namespace AdventOfCode.Helpers
                     {
                         case 01:
                             {
-                                numberOfParameters = 3;
-                                p = GetParameters(sourceCode, i, numberOfParameters);
-                                
+                                p = GetParameters(sourceCode, i, 3);
+
                                 sourceCode[p[2].ImmediateValue] = p[0].Value + p[1].Value;
                                 break;
                             }
                         case 02:
                             {
-                                numberOfParameters = 3;
-                                p = GetParameters(sourceCode, i, numberOfParameters);
+                                p = GetParameters(sourceCode, i, 3);
 
                                 sourceCode[p[2].ImmediateValue] = p[0].Value * p[1].Value;
                                 break;
                             }
                         case 03:
                             {
-                                numberOfParameters = 1;
-                                p = GetParameters(sourceCode, i, numberOfParameters);
+                                p = GetParameters(sourceCode, i, 1);
 
                                 sourceCode[p[0].ImmediateValue] = parameters[0];
                                 break;
                             }
                         case 04:
                             {
-                                numberOfParameters = 1;
-                                p = GetParameters(sourceCode, i, numberOfParameters);
+                                p = GetParameters(sourceCode, i, 1);
 
                                 returnValues.Add(p[0].Value);
+                                break;
+                            }
+                        case 05:
+                            {
+                                p = GetParameters(sourceCode, i, 2);
+                                if (p[0].Value != 0)
+                                {
+                                    i = p[1].Value;
+
+                                    //set increment to -1 so the for loop does not increment on its own. A bit ugly, i know...
+                                    increment = -1;
+                                    continue;
+                                }
+                                break;
+                            }
+                        case 06:
+                            {
+                                p = GetParameters(sourceCode, i, 2);
+                                if (p[0].Value == 0)
+                                {
+                                    i = p[1].Value;
+
+                                    //set increment to -1 so the for loop does not increment on its own. A bit ugly, i know...
+                                    increment = -1;
+                                    continue;
+                                }
+                                break;
+                            }
+                        case 07:
+                            {
+                                p = GetParameters(sourceCode, i, 3);
+                                if (p[0].Value < p[1].Value)
+                                {
+                                    sourceCode[p[2].ImmediateValue] = 1;
+                                }
+                                else
+                                {
+                                    sourceCode[p[2].ImmediateValue] = 0;
+                                }
+                                break;
+                            }
+                        case 08:
+                            {
+                                p = GetParameters(sourceCode, i, 3);
+                                if (p[0].Value == p[1].Value)
+                                {
+                                    sourceCode[p[2].ImmediateValue] = 1;
+                                }
+                                else
+                                {
+                                    sourceCode[p[2].ImmediateValue] = 0;
+                                }
                                 break;
                             }
                         case 99:
@@ -63,11 +111,13 @@ namespace AdventOfCode.Helpers
                         default:
                             throw new Exception("Unexpected OpCode");
                     }
+                    increment = p.Count;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.StackTrace);
+                if (!ex.Message.Equals("Program halt."))
+                    Console.WriteLine(ex.StackTrace);
                 return returnValues;
             }
             return null;
@@ -82,7 +132,7 @@ namespace AdventOfCode.Helpers
             while (instructionString.Length < expectedLength)
                 instructionString = "0" + instructionString;
 
-            
+
             for (int i = 1; i <= numberOfParameters; i++)
             {
                 res.Add(new Parameter(sourceCode, sourceCode[pointer + i], Convert.ToInt32(instructionString.ToString().Tail(2 + i)[0].ToString()).ToParameterMode()));
